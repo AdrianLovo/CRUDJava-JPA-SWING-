@@ -7,16 +7,24 @@ package com.crud.Vista;
 
 import Utilidades.ConvertFecha;
 import com.crud.Controller.PersonaJpaController;
+import com.crud.Controller.exceptions.NonexistentEntityException;
 import com.crud.entidades.Persona;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceException;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -29,6 +37,8 @@ public class Vista extends javax.swing.JFrame {
      */
     public Vista() {
         initComponents();
+        MostrarTabla();
+
     }
 
     /**
@@ -54,6 +64,9 @@ public class Vista extends javax.swing.JFrame {
         btnAgregar = new javax.swing.JButton();
         date = new com.toedter.calendar.JDateChooser();
         jPanel2 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        txtEliminarId = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -140,15 +153,38 @@ public class Vista extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Agregar", jPanel1);
 
+        jLabel6.setText("Id registro a eliminar:");
+
+        jButton1.setText("Eliminar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 635, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addComponent(jLabel6)
+                .addGap(31, 31, 31)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1)
+                    .addComponent(txtEliminarId, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(220, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 292, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(44, 44, 44)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(txtEliminarId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(27, 27, 27)
+                .addComponent(jButton1)
+                .addContainerGap(178, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Eliminar", jPanel2);
@@ -168,17 +204,14 @@ public class Vista extends javax.swing.JFrame {
 
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
-                "Nombre", "Apellido", "Edad", "Genero", "Fecha Nacimiento"
+                "Id", "Nombre", "Apellido", "Edad", "Genero", "Fecha Nacimiento"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, true, false
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -225,34 +258,15 @@ public class Vista extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void Borrar(){
+    public void BorrarCampos() {
         this.txtAgregarNombre.setText(null);
         this.txtAgregarApellido.setText(null);
         this.txtAgregarEdad.setText(null);
         this.date.setDate(null);
+        this.txtEliminarId.setText(null);
     }
-    
-    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
 
-        Persona persona = new Persona();
-
-        persona.setNombre(txtAgregarNombre.getText());
-        persona.setApellido(txtAgregarApellido.getText());
-        persona.setEdad(Integer.parseInt(txtAgregarEdad.getText()));
-        String genero = (String) cbxAgregarGenero.getSelectedItem();
-
-        if (genero.equals("Masculino")) {
-            persona.setGenero("M");
-        } else {
-            persona.setGenero("F");
-        }
-
-        if (this.date.getDate() != null) {
-            persona.setFechaNac(date.getDate());
-        } else {
-
-        }
-
+    public void Guardar(Persona persona) {
         try {
             EntityManagerFactory emf = Persistence.createEntityManagerFactory("CrudPU");
             EntityManager em = emf.createEntityManager();
@@ -261,11 +275,110 @@ public class Vista extends javax.swing.JFrame {
             personaC.create(persona);
             em.close();
             emf.close();
-        } catch (Exception e) {
-            
+            JOptionPane.showMessageDialog(this, "Registro agregado");
+        } catch (PersistenceException e) {
+            System.out.println(e);
         }
-        Borrar();
+    }
+
+    public void Eliminar(Persona persona) {
+        try {
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("CrudPU");
+            EntityManager em = emf.createEntityManager();
+            PersonaJpaController personaC = new PersonaJpaController(emf);
+            em.getTransaction().begin();
+            personaC.destroy(persona.getIdPersona());
+            em.close();
+            emf.close();
+            JOptionPane.showMessageDialog(this, "Registro eliminado");
+        } catch (NonexistentEntityException e) {
+            System.out.println(e);
+        }
+    }
+
+    public List<Persona> Listar() {
+        List listaPersonas = new ArrayList();
+        try {
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("CrudPU");
+            EntityManager em = emf.createEntityManager();
+            PersonaJpaController personaC = new PersonaJpaController(emf);
+            em.getTransaction().begin();
+            listaPersonas = personaC.findPersonaEntities();
+            em.close();
+            emf.close();
+        } catch (NoResultException e) {
+            System.out.println(e);
+        }
+
+        return listaPersonas;
+    }
+
+    public void MostrarTabla() {
+        List<Persona> listaPersonas = Listar();
+        int filas = 0;
+        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
+
+        for (Persona x : listaPersonas) {
+            modelo.addRow(new Object[filas]);
+            tabla.setValueAt(x.getIdPersona(), filas, 0);
+            tabla.setValueAt(x.getNombre(), filas, 1);
+            tabla.setValueAt(x.getApellido(), filas, 2);
+            tabla.setValueAt(x.getEdad(), filas, 3);
+            tabla.setValueAt(x.getGenero(), filas, 4);
+            tabla.setValueAt(x.getFechaNac(), filas, 5);
+            filas++;
+        }
+    }
+
+    public void BorrarTabla() {
+        int rows = tabla.getRowCount();
+        System.out.println("FILA " + rows);
+        for (int i = 0; i < rows; i++) {
+            System.out.println("VALOR I" + i);
+            ((DefaultTableModel) tabla.getModel()).removeRow(0);
+        }
+    }
+
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+
+        if (this.date.getDate() == null || txtAgregarNombre.getText().equals("") || this.txtAgregarApellido.getText().equals("") || txtAgregarEdad.getText().equals("")) {
+            JOptionPane.showMessageDialog(this, "Existen campos vacios");
+        } else {
+            Persona persona = new Persona();
+
+            persona.setNombre(txtAgregarNombre.getText());
+            persona.setApellido(txtAgregarApellido.getText());
+            persona.setEdad(Integer.parseInt(txtAgregarEdad.getText()));
+            String genero = (String) cbxAgregarGenero.getSelectedItem();
+            if (genero.equals("Masculino")) {
+                persona.setGenero("M");
+            } else {
+                persona.setGenero("F");
+            }
+            persona.setFechaNac(date.getDate());
+
+            Guardar(persona);
+            BorrarCampos();
+            
+            BorrarTabla();
+            MostrarTabla();
+        }
     }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        if (!txtEliminarId.getText().equals("")) {
+            Persona persona = new Persona();
+            persona.setIdPersona(Integer.parseInt(txtEliminarId.getText()));
+            Eliminar(persona);
+            BorrarCampos();
+        } else {
+            JOptionPane.showMessageDialog(this, "Ingrese el Id del campo a eliminar");
+        }
+
+        BorrarTabla();
+        MostrarTabla();
+
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -281,16 +394,21 @@ public class Vista extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Vista.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Vista.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Vista.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Vista.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Vista.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Vista.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Vista.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Vista.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -306,11 +424,13 @@ public class Vista extends javax.swing.JFrame {
     private javax.swing.JButton btnAgregar;
     private javax.swing.JComboBox cbxAgregarGenero;
     private com.toedter.calendar.JDateChooser date;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -322,5 +442,6 @@ public class Vista extends javax.swing.JFrame {
     private javax.swing.JTextField txtAgregarApellido;
     private javax.swing.JTextField txtAgregarEdad;
     private javax.swing.JTextField txtAgregarNombre;
+    private javax.swing.JTextField txtEliminarId;
     // End of variables declaration//GEN-END:variables
 }
