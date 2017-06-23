@@ -5,7 +5,6 @@
  */
 package com.crud.Vista;
 
-import Utilidades.ConvertFecha;
 import com.crud.Controller.PersonaJpaController;
 import com.crud.Controller.exceptions.NonexistentEntityException;
 import com.crud.entidades.Persona;
@@ -13,10 +12,14 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
@@ -50,6 +53,9 @@ public class Vista extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel4 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tabla = new javax.swing.JTable();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -62,18 +68,69 @@ public class Vista extends javax.swing.JFrame {
         cbxAgregarGenero = new javax.swing.JComboBox();
         jLabel5 = new javax.swing.JLabel();
         btnAgregar = new javax.swing.JButton();
-        date = new com.toedter.calendar.JDateChooser();
+        jLabel13 = new javax.swing.JLabel();
+        txtAgregarFecha = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         txtEliminarId = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tabla = new javax.swing.JTable();
-        jSeparator1 = new javax.swing.JSeparator();
+        jLabel7 = new javax.swing.JLabel();
+        txtUpdateNombre = new javax.swing.JTextField();
+        txtUpdateApellido = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        txtUpdateEdad = new javax.swing.JTextField();
+        cbxUpdateGenero = new javax.swing.JComboBox();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        btnModificar = new javax.swing.JButton();
+        jLabel12 = new javax.swing.JLabel();
+        txtUpdateId = new javax.swing.JTextField();
+        txtUpdateFecha = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        tabla.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Id", "Nombre", "Apellido", "Edad", "Genero", "Fecha Nacimiento"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tabla.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tabla);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 271, Short.MAX_VALUE)
+        );
+
+        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTabbedPane1StateChanged(evt);
+            }
+        });
 
         jLabel1.setText("Nombre:");
 
@@ -94,34 +151,39 @@ public class Vista extends javax.swing.JFrame {
             }
         });
 
-        date.setDateFormatString("yyyy-MM-dd");
+        jLabel13.setText("dd-mm-yyyy");
+        jLabel13.setOpaque(true);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(17, 17, 17)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnAgregar)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 10, Short.MAX_VALUE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel1)
                                     .addComponent(jLabel2)
                                     .addComponent(jLabel3)
                                     .addComponent(jLabel4))
-                                .addGap(76, 76, 76)))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGap(94, 94, 94))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtAgregarNombre)
                             .addComponent(txtAgregarApellido)
                             .addComponent(txtAgregarEdad)
-                            .addComponent(cbxAgregarGenero, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(date, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE))))
-                .addGap(297, 297, 297))
+                            .addComponent(cbxAgregarGenero, 0, 196, Short.MAX_VALUE)
+                            .addComponent(txtAgregarFecha))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(192, 192, 192))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -142,11 +204,12 @@ public class Vista extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(cbxAgregarGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(21, 21, 21)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                    .addComponent(txtAgregarFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 132, Short.MAX_VALUE)
                 .addComponent(btnAgregar)
                 .addGap(31, 31, 31))
         );
@@ -173,7 +236,7 @@ public class Vista extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1)
                     .addComponent(txtEliminarId, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(220, Short.MAX_VALUE))
+                .addContainerGap(240, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,75 +247,114 @@ public class Vista extends javax.swing.JFrame {
                     .addComponent(txtEliminarId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(27, 27, 27)
                 .addComponent(jButton1)
-                .addContainerGap(178, Short.MAX_VALUE))
+                .addContainerGap(266, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Eliminar", jPanel2);
+
+        jLabel7.setText("Nombre:");
+
+        jLabel8.setText("Apellido:");
+
+        jLabel9.setText("Edad:");
+
+        cbxUpdateGenero.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Masculino", "Femenino" }));
+
+        jLabel10.setText("Genero");
+
+        jLabel11.setText("Fecha de Nacimiento");
+
+        btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
+
+        jLabel12.setText("Id:");
+
+        txtUpdateId.setEnabled(false);
+
+        jLabel14.setText("dd-mm-yyyy");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 635, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnModificar)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel12))
+                        .addGap(36, 36, 36)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtUpdateNombre)
+                            .addComponent(txtUpdateApellido)
+                            .addComponent(txtUpdateEdad)
+                            .addComponent(cbxUpdateGenero, 0, 193, Short.MAX_VALUE)
+                            .addComponent(txtUpdateId)
+                            .addComponent(txtUpdateFecha))))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel14)
+                .addGap(239, 239, 239))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 292, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap(93, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtUpdateId, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtUpdateNombre, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtUpdateApellido, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtUpdateEdad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(cbxUpdateGenero, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(21, 21, 21)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(txtUpdateFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14))
+                .addGap(20, 20, 20)
+                .addComponent(btnModificar)
+                .addGap(31, 31, 31))
         );
 
         jTabbedPane1.addTab("Actualizar", jPanel3);
-
-        tabla.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Id", "Nombre", "Apellido", "Edad", "Genero", "Fecha Nacimiento"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(tabla);
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(jTabbedPane1)
-                .addContainerGap())
+                .addGap(7, 7, 7))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 7, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -262,37 +364,66 @@ public class Vista extends javax.swing.JFrame {
         this.txtAgregarNombre.setText(null);
         this.txtAgregarApellido.setText(null);
         this.txtAgregarEdad.setText(null);
-        this.date.setDate(null);
+        this.txtAgregarFecha.setText(null);
         this.txtEliminarId.setText(null);
+        this.txtUpdateId.setText(null);
+        this.txtUpdateNombre.setText(null);
+        this.txtUpdateApellido.setText(null);
+        this.txtUpdateEdad.setText(null);
+        this.txtUpdateFecha.setText(null);
     }
 
     public void Guardar(Persona persona) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("CrudPU");
+        EntityManager em = emf.createEntityManager();
+        PersonaJpaController personaC = new PersonaJpaController(emf);
+        em.getTransaction().begin();
+
         try {
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("CrudPU");
-            EntityManager em = emf.createEntityManager();
-            PersonaJpaController personaC = new PersonaJpaController(emf);
-            em.getTransaction().begin();
             personaC.create(persona);
+            em.getTransaction().commit();
             em.close();
             emf.close();
             JOptionPane.showMessageDialog(this, "Registro agregado");
         } catch (PersistenceException e) {
             System.out.println(e);
+            em.getTransaction().rollback();
         }
     }
 
     public void Eliminar(Persona persona) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("CrudPU");
+        EntityManager em = emf.createEntityManager();
+        PersonaJpaController personaC = new PersonaJpaController(emf);
+        em.getTransaction().begin();
+
         try {
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("CrudPU");
-            EntityManager em = emf.createEntityManager();
-            PersonaJpaController personaC = new PersonaJpaController(emf);
-            em.getTransaction().begin();
             personaC.destroy(persona.getIdPersona());
+            em.getTransaction().commit();
             em.close();
             emf.close();
             JOptionPane.showMessageDialog(this, "Registro eliminado");
         } catch (NonexistentEntityException e) {
             System.out.println(e);
+            em.getTransaction().rollback();
+        }
+    }
+
+    public void Modificar(Persona persona) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("CrudPU");
+        EntityManager em = emf.createEntityManager();
+        PersonaJpaController personaC = new PersonaJpaController(emf);
+        em.getTransaction().begin();
+
+        try {
+            personaC.edit(persona);
+            em.getTransaction().commit();
+            em.close();
+            emf.close();
+            JOptionPane.showMessageDialog(this, "Registro Modificado");
+        } catch (Exception e) {
+            System.out.println(e);
+            em.getTransaction().rollback();
         }
     }
 
@@ -325,7 +456,10 @@ public class Vista extends javax.swing.JFrame {
             tabla.setValueAt(x.getApellido(), filas, 2);
             tabla.setValueAt(x.getEdad(), filas, 3);
             tabla.setValueAt(x.getGenero(), filas, 4);
-            tabla.setValueAt(x.getFechaNac(), filas, 5);
+
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+            String fechaTexto = formatter.format(x.getFechaNac());
+            tabla.setValueAt(fechaTexto, filas, 5);
             filas++;
         }
     }
@@ -334,36 +468,68 @@ public class Vista extends javax.swing.JFrame {
         int rows = tabla.getRowCount();
         System.out.println("FILA " + rows);
         for (int i = 0; i < rows; i++) {
-            System.out.println("VALOR I" + i);
             ((DefaultTableModel) tabla.getModel()).removeRow(0);
         }
     }
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        String regexp = "\\d{1,2}-\\d{1,2}-\\d{4}";
+        Boolean fecha = false;
 
-        if (this.date.getDate() == null || txtAgregarNombre.getText().equals("") || this.txtAgregarApellido.getText().equals("") || txtAgregarEdad.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Existen campos vacios");
-        } else {
-            Persona persona = new Persona();
+        fecha = Pattern.matches(regexp, txtAgregarFecha.getText());
 
-            persona.setNombre(txtAgregarNombre.getText());
-            persona.setApellido(txtAgregarApellido.getText());
-            persona.setEdad(Integer.parseInt(txtAgregarEdad.getText()));
-            String genero = (String) cbxAgregarGenero.getSelectedItem();
-            if (genero.equals("Masculino")) {
-                persona.setGenero("M");
+        try {
+            int numero = Integer.parseInt(txtAgregarEdad.getText());
+
+            if (fecha == false || this.txtAgregarFecha.getText() == null || txtAgregarNombre.getText().equals("") || this.txtAgregarApellido.getText().equals("") || txtAgregarEdad.getText().equals("")) {
+                JOptionPane.showMessageDialog(this, "Existen campos vacios");
             } else {
-                persona.setGenero("F");
-            }
-            persona.setFechaNac(date.getDate());
+                Persona persona = new Persona();
 
-            Guardar(persona);
-            BorrarCampos();
-            
-            BorrarTabla();
-            MostrarTabla();
+                persona.setNombre(txtAgregarNombre.getText());
+                persona.setApellido(txtAgregarApellido.getText());
+
+                persona.setEdad(Integer.parseInt(txtAgregarEdad.getText()));
+
+                String genero = (String) cbxAgregarGenero.getSelectedItem();
+                if (genero.equals("Masculino")) {
+                    persona.setGenero("M");
+                } else {
+                    persona.setGenero("F");
+                }
+
+                persona.setFechaNac(ConvertirFecha(this.txtAgregarFecha.getText()));
+
+                Guardar(persona);
+                BorrarCampos();
+
+                BorrarTabla();
+                MostrarTabla();
+            }
+
+        } catch (Exception e) {
+            txtAgregarEdad.setText("");
+            JOptionPane.showMessageDialog(this, "Edad no valida");
         }
+
+
     }//GEN-LAST:event_btnAgregarActionPerformed
+
+    public Date ConvertirFecha(String fecha) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        String dateInString = fecha;
+        Date date = null;
+        try {
+            date = formatter.parse(dateInString);
+            System.out.println(date);
+            System.out.println(formatter.format(date));
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         if (!txtEliminarId.getText().equals("")) {
@@ -379,6 +545,69 @@ public class Vista extends javax.swing.JFrame {
         MostrarTabla();
 
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        String regexp = "\\d{1,2}-\\d{1,2}-\\d{4}";
+        Boolean fecha = false;
+
+        fecha = Pattern.matches(regexp, txtUpdateFecha.getText());
+
+        try {
+            int numero = Integer.parseInt(txtUpdateEdad.getText());
+
+            if (fecha == false || this.txtUpdateFecha.getText() == null || txtUpdateNombre.getText().equals("") || this.txtUpdateApellido.getText().equals("") || txtUpdateEdad.getText().equals("")) {
+                JOptionPane.showMessageDialog(this, "Existen campos vacios");
+            } else {
+
+                Persona persona = new Persona();
+                persona.setIdPersona(Integer.parseInt(this.txtUpdateId.getText()));
+                persona.setNombre(txtUpdateNombre.getText());
+                persona.setApellido(txtUpdateApellido.getText());
+                persona.setEdad(Integer.parseInt(txtUpdateEdad.getText()));
+
+                String genero = (String) cbxUpdateGenero.getSelectedItem();
+                if (genero.equals("Masculino")) {
+                    persona.setGenero("M");
+                } else {
+                    persona.setGenero("F");
+                }
+
+                persona.setFechaNac(ConvertirFecha(this.txtUpdateFecha.getText()));
+                Modificar(persona);
+                BorrarCampos();
+
+                BorrarTabla();
+                MostrarTabla();
+            }
+        } catch (Exception e) {
+            txtAgregarEdad.setText("");
+            JOptionPane.showMessageDialog(this, "Edad no valida");
+        }
+
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void tablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMouseClicked
+
+        this.txtEliminarId.setText(tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
+        this.txtUpdateId.setText(tabla.getValueAt(tabla.getSelectedRow(), 0).toString());
+        this.txtUpdateNombre.setText(tabla.getValueAt(tabla.getSelectedRow(), 1).toString());
+        this.txtUpdateApellido.setText(tabla.getValueAt(tabla.getSelectedRow(), 2).toString());
+        this.txtUpdateEdad.setText(tabla.getValueAt(tabla.getSelectedRow(), 3).toString());
+
+        if (tabla.getValueAt(tabla.getSelectedRow(), 4).toString().equals("M")) {
+            this.cbxUpdateGenero.setSelectedIndex(0);
+        } else {
+            this.cbxUpdateGenero.setSelectedIndex(1);
+        }
+
+        this.txtUpdateFecha.setText(tabla.getValueAt(tabla.getSelectedRow(), 5).toString());
+
+
+    }//GEN-LAST:event_tablaMouseClicked
+
+    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
+        BorrarCampos();
+    }//GEN-LAST:event_jTabbedPane1StateChanged
 
     /**
      * @param args the command line arguments
@@ -422,26 +651,40 @@ public class Vista extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnModificar;
     private javax.swing.JComboBox cbxAgregarGenero;
-    private com.toedter.calendar.JDateChooser date;
+    private javax.swing.JComboBox cbxUpdateGenero;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable tabla;
     private javax.swing.JTextField txtAgregarApellido;
     private javax.swing.JTextField txtAgregarEdad;
+    private javax.swing.JTextField txtAgregarFecha;
     private javax.swing.JTextField txtAgregarNombre;
     private javax.swing.JTextField txtEliminarId;
+    private javax.swing.JTextField txtUpdateApellido;
+    private javax.swing.JTextField txtUpdateEdad;
+    private javax.swing.JTextField txtUpdateFecha;
+    private javax.swing.JTextField txtUpdateId;
+    private javax.swing.JTextField txtUpdateNombre;
     // End of variables declaration//GEN-END:variables
 }
